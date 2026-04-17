@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="WeatherForecasts.API/WeatherForecasts.API.csproj" Id="e77191a0-e1c2-4a5c-be9e-383e3defb5fc" />
+  <Project Path="WeatherForecasts.Application/WeatherForecasts.Application.csproj" Id="578069ee-840e-42c9-b112-1041598154ed" />
+  <Project Path="WeatherForecasts.Domain/WeatherForecasts.Domain.csproj" Id="ce88aab5-c9ef-480e-9aaf-969c97dac808" />
+  <Project Path="WeatherForecasts.Infrastructure/WeatherForecasts.Infrastructure.csproj" Id="bd6b53ae-0d90-489f-8d0e-9a412a2af9a9" />
+</Solution>
