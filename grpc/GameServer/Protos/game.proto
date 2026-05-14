@@ -2,7 +2,7 @@ syntax = "proto3";
 
 option csharp_namespace = "GameServer.Protos";
 
-service GameService
+service Game
 {
 	rpc JoinGame (stream PlayerAction) returns (stream GameEvent);
 }
