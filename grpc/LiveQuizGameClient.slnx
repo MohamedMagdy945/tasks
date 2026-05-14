@@ -1,4 +1,3 @@
 <Solution>
   <Project Path="GameClient/GameClient.csproj" Id="c0076b34-26fb-4f3a-bbe1-5c4ff2bd2b2b" />
-  <Project Path="GameServer/GameServer.csproj" Id="b512411e-9516-426b-aecc-071c07414994" />
 </Solution>

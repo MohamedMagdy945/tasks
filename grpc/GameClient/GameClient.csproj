@@ -7,8 +7,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-	<Protobuf Include="..\GameServer\Protos\game.proto"
-			  GrpcServices="Client" />
+	<Protobuf Include="..\GameServer\Protos\game.proto" GrpcServices="Client" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.34.1" />

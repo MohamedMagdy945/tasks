@@ -6,39 +6,35 @@ namespace GameServer.Services
     public class GameService : Game.GameBase
     {
         public override async Task JoinGame(
-          IAsyncStreamReader<PlayerAction> requestStream,
-          IServerStreamWriter<GameEvent> responseStream,
-          ServerCallContext context)
+        IAsyncStreamReader<PlayerAction> requestStream,
+        IServerStreamWriter<GameEvent> responseStream,
+    ServerCallContext context)
         {
-            var cts = context.CancellationToken;
-
             var readTask = Task.Run(async () =>
             {
-                while (await requestStream.MoveNext())
+                await foreach (var action in requestStream.ReadAllAsync())
                 {
-                    var action = requestStream.Current;
-
                     Console.WriteLine($"{action.PlayerName}: {action.Answer}");
                 }
             });
 
-            var remaining = 10;
-
-            while (!cts.IsCancellationRequested && remaining >= 0)
+            var writeTask = Task.Run(async () =>
             {
-                await responseStream.WriteAsync(new GameEvent
+                while (!context.CancellationToken.IsCancellationRequested)
                 {
-                    CurrentQuestion = "What is 2 + 2 ?",
-                    RemainingSeconds = remaining,
-                    Leaderboard = "Ahmed:10, Ali:8",
-                    Winner = ""
-                });
+                    await responseStream.WriteAsync(new GameEvent
+                    {
+                        CurrentQuestion = "What is 2 + 2 ?",
+                        RemainingSeconds = 10,
+                        Leaderboard = "Ahmed:10, Ali:8",
+                        Winner = ""
+                    });
 
-                remaining--;
-                await Task.Delay(1000);
-            }
+                    await Task.Delay(4000);
+                }
+            });
 
-            await readTask;
+            await Task.WhenAll(readTask, writeTask);
         }
     }
 }

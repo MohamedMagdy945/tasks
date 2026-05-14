@@ -1,6 +1,7 @@
-﻿using GameServer.Protos;
-using GameServer.Services;
-using Grpc.Core;
+﻿using GameServer.Services;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace GameServer
 {
@@ -8,13 +9,24 @@ namespace GameServer
     {
         public static void Main(string[] args)
         {
-            var server = new Server
-            {
-                Services = { Game.BindService(new GameService()) },
-                Ports = { new ServerPort("localhost", 5000, ServerCredentials.Insecure) }
-            };
+            var builder = WebApplication.CreateBuilder(args);
 
-            server.Start();
+            builder.WebHost.ConfigureKestrel(options =>
+            {
+                options.ListenLocalhost(5000, listenOptions =>
+                {
+                    listenOptions.Protocols =
+                        Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
+                });
+            });
+
+            builder.Services.AddGrpc();
+
+            var app = builder.Build();
+
+            app.MapGrpcService<GameService>();
+
+            app.Run();
         }
     }
 }

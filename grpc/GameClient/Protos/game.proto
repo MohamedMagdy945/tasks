@@ -1,0 +1,22 @@
+syntax = "proto3";	
+
+option csharp_namespace = "GameServer.Protos";
+
+service Game
+{
+	rpc JoinGame (stream PlayerAction) returns (stream GameEvent);
+}
+
+message PlayerAction
+{
+	string playerName = 1;
+	string answer  = 2;
+}
+
+message GameEvent
+{
+	string currentQuestion = 1;
+	int32 remainingSeconds = 2;
+	string leaderboard = 3;
+	string winner = 4;
+}

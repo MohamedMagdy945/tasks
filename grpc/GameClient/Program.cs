@@ -2,43 +2,42 @@
 using Grpc.Core;
 using Grpc.Net.Client;
 
-namespace GameClient
+class Program
 {
-    internal class Program
+    static async Task Main(string[] args)
     {
-        static async Task Main(string[] args)
+        // مهم: نفس port بتاع السيرفر
+        using var channel = GrpcChannel.ForAddress("http://localhost:5000");
+
+        var client = new Game.GameClient(channel);
+
+        using var call = client.JoinGame();
+        // Task لإرسال البيانات (Client Stream)
+        var sendTask = Task.Run(async () =>
         {
-
-            var channel = GrpcChannel.ForAddress("http://localhost:5000");
-            var client = new Game.GameClient(channel);
-
-            using var call = client.JoinGame();
-
-            var sendTask = Task.Run(async () =>
+            while (true)
             {
-                for (int i = 1; i <= 5; i++)
+                var input = Console.ReadLine();
+
+                await call.RequestStream.WriteAsync(new PlayerAction
                 {
-                    await call.RequestStream.WriteAsync(new PlayerAction
-                    {
-                        PlayerName = "Ahmed",
-                        Answer = $"Answer {i}"
-                    });
+                    PlayerName = "Ahmed",
+                    Answer = input
+                });
+            }
+        });
 
-                    await Task.Delay(1000);
-                }
+        while (await call.ResponseStream.MoveNext())
+        {
+            var gameEvent = call.ResponseStream.Current;
 
-                await call.RequestStream.CompleteAsync();
-            });
-
-            var readTask = Task.Run(async () =>
-            {
-                await foreach (var msg in call.ResponseStream.ReadAllAsync())
-                {
-                    Console.WriteLine($"SERVER: {msg.CurrentQuestion} | {msg.RemainingSeconds}");
-                }
-            });
-
-            await Task.WhenAll(sendTask, readTask);
+            Console.WriteLine("Question: " + gameEvent.CurrentQuestion);
+            Console.WriteLine("Time: " + gameEvent.RemainingSeconds);
+            Console.WriteLine("Leaderboard: " + gameEvent.Leaderboard);
+            Console.WriteLine("Winner: " + gameEvent.Winner);
+            Console.WriteLine("----------------------------------");
         }
+
+        await sendTask;
     }
 }
