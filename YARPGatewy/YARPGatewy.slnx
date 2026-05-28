@@ -1,4 +1,3 @@
 <Solution>
   <Project Path="ApiGateway/ApiGateway.csproj" />
-  <Project Path="ProductService/ProductService.csproj" />
 </Solution>

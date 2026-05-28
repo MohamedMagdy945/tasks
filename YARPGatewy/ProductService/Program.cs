@@ -9,19 +9,40 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
 
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+
 };
+
+
+
+app.MapGet("/", () =>
+{
+    return new[]
+    {
+        "Laptop",
+        "Phone",
+        "Keyboard"
+    };
+});
+
+app.MapGet("/products", () =>
+{
+    return new[]
+    {
+        "Laptop",
+        "Phone",
+        "Keyboard"
+    };
+});
 
 app.MapGet("/weatherforecast", () =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
+    var forecast = Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast
         (
             DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
